@@ -10,7 +10,7 @@ function Logout() {
 
   const handleLogout = () => {
     setAuthUser(null);
-    localStorage.removeItem('Users');
+    localStorage.removeItem('user');
     toast.success('Logout successfully');
     navigate('/');
   };

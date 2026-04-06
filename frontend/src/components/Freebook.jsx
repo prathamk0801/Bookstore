@@ -1,82 +1,66 @@
+
 import React from 'react'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Cards from './Cards';
 import axios from 'axios'
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 function Freebook() {
-const[book,setBook]= useState([]);
-  useEffect(()=>{
-    const getBook= async ()=>{
-      try {
-        const res= await axios.get("http://localhost:4001/book");
-        const data =res.data.filter((data) => data.Category === "Free")
-          console.log(data);
-        setBook(data);
-      } catch (error) {
-        console.log(error)
-      }
-    };
-    getBook();
-  },[]); 
+  const [book, setBook] = useState([]);
 
-      var settings = {
+useEffect(() => {
+  const fetchBooks = async () => {
+    try {
+      const res = await axios.get("https://bookstore-9tth.onrender.com/book");
+      console.log("All books from backend:", res.data);
+      
+     const freeBooks = res.data.filter(item => {
+  // check field name dynamically
+  const category = item.Category || item.category || ""; 
+  return category.trim().toLowerCase() === "free";
+});
+      
+      console.log("Filtered Free books:", freeBooks);
+      setBook(freeBooks);
+    } catch (err) {
+      console.log("Error fetching books:", err);
+    }
+  };
+  fetchBooks();
+}, []);
+
+  var settings = {
     dots: true,
-      arrows: false, 
+    arrows: false,
     infinite: false,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 3,
-    initialSlide: 0,
     responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          infinite: true,
-          dots: true
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2
-        }
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      }
+      { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 3 } },
+      { breakpoint: 600, settings: { slidesToShow: 2, slidesToScroll: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } }
     ]
   };
 
- console.log(book);
   return (
-   <>
-  <div className='max-w-[1130px] mx-auto md:px-10 px-3 -mt-3 md:-mt-7' >
-     <div><h2 className='text-xl font-semibold break-words'>Free<span className='text-pink-500'> offered </span> Books</h2>
-     <p>Lorem ipsum, dolor sit amet consectetur adipisicing. Alias eaque sit vero, dicta debitis optio architecto similique commodi quos perferendis.
-     </p></div>
-     
-     <div className='w-full mt-6'> 
-      <Slider {...settings}>
-  {book.map((item) => (
-    <Cards key={item.id} item={item} />
-  ))}
-</Slider>
+    <div className='max-w-[1130px] mx-auto md:px-10 px-3'>
+      <h2 className='text-xl font-semibold'>
+        Free <span className='text-pink-500'>offered</span> Books
+      </h2>
+
+      <div className='w-full mt-6'>
+        <Slider {...settings}>
+          {book.map((item) => (
+            // ✅ FIXED KEY
+            <Cards key={item._id} item={item} />
+          ))}
+        </Slider>
       </div>
-      </div>
-   </>
-  )
+    </div>
+  );
 }
 
-export default Freebook
+export default Freebook;

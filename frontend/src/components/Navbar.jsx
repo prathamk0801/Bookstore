@@ -50,7 +50,7 @@ function Navbar() {
 
   return (
     <div
-      className={`w-full fixed top-0 left-0 right-0 transition-all duration-300 z-50 ${
+      className={`w-full fixed top-0 left-0 right-0 transition-all duration-300 z-[100] ${
         sticky ? "bg-white dark:bg-slate-900 shadow-md" : "bg-white dark:bg-slate-900"
       }`}
     >
